@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SAKA PENDUKUNG</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e3f2fd;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background: #1976d2;
+      color: white;
+      padding: 30px;
+      width: 100%;
+      text-align: center;
+      font-size: 28px;
+    }
+    
+    header .source-info {
+      font-size: 16px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .clock-container {
+      margin-top: 50px;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 85%;
+      max-width: 700px;
+    }
+
+    .label {
+      font-size: 26px;
+      margin-top: 25px;
+    }
+
+    .value {
+      font-size: 48px;
+      color: #1565c0;
+      font-weight: bold;
+    }
+    
+    .info-text {
+      font-size: 25px;
+      margin-top: 15px;
+      color: #424242;
+    }
+    
+    .source-text {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #757575;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="source-info">KEMENDUK BANGGA/BKKBN PROV. KEP. BABEL.</div>
+  <h1>SAKA PENDUKUNG</h1>
+  <p>Sajian Angka Penduduk Bangka Belitung</p>
+</header>
+
+<div class="clock-container">
+  <div class="label">Estimasi Populasi Saat Ini:</div>
+  <div id="population" class="value"></div>
+
+  <div class="label">Jumlah Kelahiran: <span id="births" class="value"></span></div>
+  <div class="label">Jumlah Kematian: <span id="deaths" class="value"></span></div>
+  <!-- Teks rasio jenis kelamin -->
+  <div class="info-text">
+    Tahukah kamu jika rasio jenis kelamin di Provinsi Kepulauan Bangka Belitung saat ini adalah 105,4. Ini artinya jumlah laki-laki lebih banyak daripada jumlah perempuan yaitu dari 100 perempuan, terdapat 105 laki-laki.
+  </div>
+  
+  <div class="label">Jumlah Pengunjung Halaman Ini: <span id="visitors" class="value"></span></div>
+  <!-- Sumber proyeksi -->
+  <div class="source-text">
+    Sumber: Proyeksi penduduk Provinsi Kepulauan Bangka Belitung.
+  </div>
+</div>
+
+<script>
+  let initialPopulation = 1586238;
+  let currentPopulation = initialPopulation;
+  let births = 9359;
+  let deaths = 2854;
+  
+  // Laju pertumbuhan penduduk tahunan 1,31%
+  const annualGrowth = 0.0131;
+  const secondsInYear = 365 * 24 * 3600; // 31,536,000
+  
+  // Simpan jumlah pengunjung di localStorage
+  if (!localStorage.pageViews) {
+    localStorage.pageViews = 0;
+  }
+  localStorage.pageViews = Number(localStorage.pageViews) + 1;
+  document.getElementById("visitors").innerText = localStorage.pageViews;
+
+  function updatePopulation() {
+    // Hitung penambahan penduduk saat ini per detik berdasarkan pertumbuhan proporsional
+    let netIncrease = currentPopulation * annualGrowth / secondsInYear;
+    // Asumsikan rasio kelahiran dan kematian 2:1 sehingga:
+    let birthsIncrement = 2 * currentPopulation * annualGrowth / secondsInYear;
+    let deathsIncrement = currentPopulation * annualGrowth / secondsInYear;
+    
+    births += birthsIncrement;
+    deaths += deathsIncrement;
+    currentPopulation += netIncrease;
+
+    document.getElementById("population").innerText = currentPopulation.toLocaleString("id-ID", {
+      maximumFractionDigits: 0
+    });
+    document.getElementById("births").innerText = Math.floor(births).toLocaleString("id-ID");
+    document.getElementById("deaths").innerText = Math.floor(deaths).toLocaleString("id-ID");
+  }
+
+  // Tampilkan nilai awal
+  document.getElementById("population").innerText = currentPopulation.toLocaleString("id-ID");
+  document.getElementById("births").innerText = Math.floor(births).toLocaleString("id-ID");
+  document.getElementById("deaths").innerText = Math.floor(deaths).toLocaleString("id-ID");
+
+  // Update setiap detik
+  setInterval(updatePopulation, 1000);
+</script>
+
+</body>
+</html>
